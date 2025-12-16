@@ -1,7 +1,19 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
+import React from 'react';
 
-import "./globals.css";
+const RootLayout = () => {
+  const session = false;
 
-export default function RootLayout() {
-  return <Stack />;
+  return (
+    <Stack>
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="(welcome)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+    </Stack>
+  )
 }
+
+export default RootLayout
