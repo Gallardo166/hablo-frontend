@@ -1,8 +1,9 @@
 import { SignUpContext } from '@/components/welcome/sign-up/SignUpContext'
+import { useUserContext } from '@/components/welcome/sign-up/UserContext'
 import { Link, Slot } from 'expo-router'
+import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
 import { GestureResponderEvent, Text, View } from 'react-native'
-
 
 const SignUpLayout = () => {
   const [username, setUsername] = useState<string>("");
@@ -12,6 +13,7 @@ const SignUpLayout = () => {
   const [sourceLang, setSourceLang] = useState<string>("");
   const [targetLang, setTargetLang] = useState<string>("");
   const [languages, setLanguages] = useState<string[]>([]);
+  const { setUser } = useUserContext();
   
   const getLanguages = async () => {
     const response = await fetch("http://localhost:8080/v1/languages");
@@ -36,7 +38,11 @@ const SignUpLayout = () => {
       })
     });
     const content = await response.json();
-    console.log(content);
+    if (!content.error) {
+      await SecureStore.deleteItemAsync("token");
+      await SecureStore.setItemAsync("token", content.token.token);
+      setUser(content.user);
+    }
   }
 
   return (

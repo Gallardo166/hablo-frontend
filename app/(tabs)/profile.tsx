@@ -1,0 +1,42 @@
+import { useUserContext } from '@/components/welcome/sign-up/UserContext';
+import * as SecureStore from 'expo-secure-store';
+import React, { useState } from 'react';
+import { Button, Modal, Text, View } from 'react-native';
+import "../globals.css";
+
+const Profile = () => {
+  const [ modalVisible, setModalVisible ] = useState<boolean>(false);
+  const { setUser } = useUserContext();
+
+  async function handleLogout() {
+    const token = await SecureStore.getItemAsync("token");
+    const response = await fetch("http://localhost:8080/v1/tokens", {
+      "method": "DELETE",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    const content = await response.json();
+    console.log(content);
+    if (!content.error) {
+      setUser(undefined);
+    }
+  }
+
+  return (
+    <View>
+      <Modal visible={modalVisible} className="bg-black">
+        <View className="flex-1 items-center justify-center">
+          <Text className="font-bold">Are you sure you want to log out?</Text>
+          <Button title="Cancel" onPress={() => setModalVisible(false)} />
+          <Button title="Log out" onPress={handleLogout} />
+        </View>
+      </Modal>
+      <Button title="Log out" onPress={() => setModalVisible(true)} />
+    </View>
+  )
+}
+
+export default Profile

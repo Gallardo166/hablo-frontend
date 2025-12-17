@@ -1,3 +1,5 @@
+import { useUserContext } from '@/components/welcome/sign-up/UserContext';
+import * as SecureStore from 'expo-secure-store';
 import React, { useState } from 'react';
 import { Button, GestureResponderEvent, Text, TextInput, View } from 'react-native';
 
@@ -10,6 +12,7 @@ const LoginScreen = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<LoginErrorsType>({username: "", password: ""});
+  const { setUser } = useUserContext();
 
   function handleUsernameChangeText(text: string) {
     setUsername(text);
@@ -46,6 +49,12 @@ const LoginScreen = () => {
     });
     const content = await response.json();
     console.log(content);
+    if (!content.error) {
+      await SecureStore.deleteItemAsync("token");
+      await SecureStore.setItemAsync("token", content.token.token);
+      console.log(content.user);
+      setUser(content.user);
+    }
   }
 
   return (
