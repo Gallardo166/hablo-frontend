@@ -6,12 +6,13 @@ import { Button, GestureResponderEvent, Text, TextInput, View } from 'react-nati
 type LoginErrorsType = {
   username: string; // cannot be empty, at most 100 chars long
   password: string; // cannot be empty, at least 8 chars long
+  general: string;
 }
 
 const LoginScreen = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [errors, setErrors] = useState<LoginErrorsType>({username: "", password: ""});
+  const [errors, setErrors] = useState<LoginErrorsType>({username: "", password: "", general: ""});
   const { setUser } = useUserContext();
 
   function handleUsernameChangeText(text: string) {
@@ -37,6 +38,7 @@ const LoginScreen = () => {
   }
 
   async function handleSubmit(e: GestureResponderEvent) {
+    setErrors(errors => ({...errors, general: ""}));
     const response = await fetch("http://localhost:8080/v1/tokens", {
       method: "POST",
       headers: {
@@ -54,6 +56,9 @@ const LoginScreen = () => {
       await SecureStore.setItemAsync("token", content.token.token);
       console.log(content.user);
       setUser(content.user);
+    } else if (content.error === "the requested resource could not be found" ||
+               content.error === "invalid authentication credentials") {
+      setErrors(errors => ({...errors, general: "Incorrect username or password."}));
     }
   }
 
@@ -63,6 +68,7 @@ const LoginScreen = () => {
       {errors.username ? <Text>{errors.username}</Text> : null}
       <TextInput placeholder="Password" defaultValue={password} onChangeText={handlePasswordChangeText} />
       {errors.password ? <Text>{errors.password}</Text> : null}
+      {errors.general ? <Text>{errors.general}</Text> : null}
       <Button title="Log in" onPress={handleSubmit} />
     </View>
   )

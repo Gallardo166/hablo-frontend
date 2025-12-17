@@ -16,6 +16,7 @@ export type SignUpContextType = {
   setTargetLang: React.Dispatch<React.SetStateAction<string>>;
   languages: string[];
   handleSubmit: (e: GestureResponderEvent) => Promise<void>;
+  error: string;
 }
 
 export const SignUpContext = createContext<SignUpContextType | undefined>(undefined);

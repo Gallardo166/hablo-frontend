@@ -13,6 +13,7 @@ const SignUpLayout = () => {
   const [sourceLang, setSourceLang] = useState<string>("");
   const [targetLang, setTargetLang] = useState<string>("");
   const [languages, setLanguages] = useState<string[]>([]);
+  const [error, setError] = useState<string>("");
   const { setUser } = useUserContext();
   
   const getLanguages = async () => {
@@ -27,6 +28,7 @@ const SignUpLayout = () => {
   }, []);
 
   async function handleSubmit(e: GestureResponderEvent) {
+    setError("");
     const response = await fetch("http://localhost:8080/v1/users", {
       method: "POST",
       headers: {
@@ -38,16 +40,19 @@ const SignUpLayout = () => {
       })
     });
     const content = await response.json();
+    console.log(content);
     if (!content.error) {
       await SecureStore.deleteItemAsync("token");
       await SecureStore.setItemAsync("token", content.token.token);
       setUser(content.user);
+    } else if (content.error === "Duplicate value") {
+      setError("This username is taken!")
     }
   }
 
   return (
     <SignUpContext value={{username, password, confirmPassword, imageUrl, sourceLang, targetLang,
-      setUsername, setPassword, setConfirmPassword, setImageUrl, setSourceLang, setTargetLang, languages, handleSubmit
+      setUsername, setPassword, setConfirmPassword, setImageUrl, setSourceLang, setTargetLang, languages, handleSubmit, error
     }}>
       <View>
         <Text>Let&apos;s get to know you!</Text>

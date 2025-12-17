@@ -1,16 +1,8 @@
 import { useSignUpContext } from '@/components/welcome/sign-up/SignUpContext';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import SelectDropDown from 'react-native-select-dropdown';
-
-export const SelectButton = (selectedItem: string) => {
-  return (
-    <View>
-      <Text>{selectedItem || "Choose a language!"}</Text>
-    </View>
-  )
-}
 
 export const Option = (item: string) => {
   return (
@@ -21,7 +13,7 @@ export const Option = (item: string) => {
 }
 
 const LanguageDetails = () => {
-  const { sourceLang, setSourceLang, targetLang, setTargetLang, languages, handleSubmit } = useSignUpContext();
+  const { sourceLang, setSourceLang, targetLang, setTargetLang, languages } = useSignUpContext();
   const [error, setError] = useState<string>("")
 
   function handleSourceLangSelect(language: string) {
@@ -48,21 +40,35 @@ const LanguageDetails = () => {
       <SelectDropDown
         data={languages}
         onSelect={handleSourceLangSelect}
-        renderButton={SelectButton}
+        renderButton={(selectedItem: string) => {
+          return (
+            <View>
+              <Text>{sourceLang || "Choose a language!"}</Text>
+            </View>
+          )
+        }}
         renderItem={Option}
       />
       <Text>What language are you comfortable speaking?</Text>
       <SelectDropDown 
         data={languages}
         onSelect={handleTargetLangSelect}
-        renderButton={SelectButton}
+        renderButton={(selectedItem: string) => {
+          return (
+            <View>
+              <Text>{targetLang || "Choose a language!"}</Text>
+            </View>
+          )
+        }}
         renderItem={Option}
       />
       {error ? <Text>{error}</Text> : null}
-      <Link href="/(welcome)/sign-up/account-details">
-        Back
+      <Link
+        href="/(welcome)/sign-up/account-details"
+        disabled={!!error || !sourceLang || !targetLang}
+      >
+        Next
       </Link>
-      <Button title="Done!" onPress={handleSubmit} />
     </View>
   )
 }

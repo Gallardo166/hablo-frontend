@@ -1,7 +1,7 @@
 import { useSignUpContext } from '@/components/welcome/sign-up/SignUpContext';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Button, Text, TextInput, View } from 'react-native';
 
 type AccountDetailErrorsType = {
   username: string; // cannot be empty, at most 100 chars long
@@ -10,7 +10,8 @@ type AccountDetailErrorsType = {
 }
 
 const AccountDetails = () => {
-  const { username, password, confirmPassword, setUsername, setPassword, setConfirmPassword } = useSignUpContext();
+  const { username, password, confirmPassword, setUsername,
+          setPassword, setConfirmPassword, handleSubmit, error } = useSignUpContext();
   const [errors, setErrors] = useState<AccountDetailErrorsType>({username: "", password: "", confirmPassword: ""})
 
   function handleUsernameChangeText(text: string) {
@@ -57,11 +58,14 @@ const AccountDetails = () => {
       {errors.password ? <Text>{errors.password}</Text> : null}
       <TextInput placeholder="Confirm password" defaultValue={confirmPassword} onChangeText={handleConfirmPasswordChangeText} />
       {errors.confirmPassword ? <Text>{errors.confirmPassword}</Text> : null}
-      <Link
-        href="/(welcome)/sign-up/language-details"
-        disabled={(Object.values(errors).some(error => error)) || !(username && password && confirmPassword)}>
-          Next
+      {error ? <Text>{error}</Text> : null}
+      <Link href="/(welcome)/sign-up">
+          Back
       </Link>
+      <Button
+        disabled={Object.values(errors).some(error => !!error) || !username || !password || !confirmPassword }
+        title="Done!"
+        onPress={handleSubmit} />
     </View>
   )
 }
