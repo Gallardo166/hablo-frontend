@@ -12,7 +12,7 @@ type AccountDetailErrorsType = {
 const AccountDetails = () => {
   const { username, password, confirmPassword, setUsername,
           setPassword, setConfirmPassword, handleSubmit, error } = useSignUpContext();
-  const [errors, setErrors] = useState<AccountDetailErrorsType>({username: "", password: "", confirmPassword: ""})
+  const [errors, setErrors] = useState<AccountDetailErrorsType>({username: "", password: "", confirmPassword: ""});
 
   function handleUsernameChangeText(text: string) {
     setUsername(text);

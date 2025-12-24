@@ -53,7 +53,7 @@ const LoginScreen = () => {
     console.log(content);
     if (!content.error) {
       await SecureStore.deleteItemAsync("token");
-      await SecureStore.setItemAsync("token", content.token.token);
+      await SecureStore.setItemAsync("token", content.tokenData.token);
       console.log(content.user);
       setUser(content.user);
     } else if (content.error === "the requested resource could not be found" ||

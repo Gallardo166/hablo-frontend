@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
 
 const RootLayout = () => {
-  const [ user, setUser ] = useState<UserData | undefined>(undefined);
+  const [ user, setUser ] = useState<UserData | null>(null);
 
   const getToken = async () => {
     const token = await SecureStore.getItemAsync("token");

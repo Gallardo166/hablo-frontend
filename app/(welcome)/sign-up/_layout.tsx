@@ -43,7 +43,7 @@ const SignUpLayout = () => {
     console.log(content);
     if (!content.error) {
       await SecureStore.deleteItemAsync("token");
-      await SecureStore.setItemAsync("token", content.token.token);
+      await SecureStore.setItemAsync("token", content.tokenData.token);
       setUser(content.user);
     } else if (content.error === "Duplicate value") {
       setError("This username is taken!")

@@ -8,8 +8,8 @@ export type UserData = {
   lastActiveDate: string;
 }
 export type UserContextType = {
-  user: UserData | undefined;
-  setUser: React.Dispatch<React.SetStateAction<UserData | undefined>>;
+  user: UserData | null;
+  setUser: React.Dispatch<React.SetStateAction<UserData | null>>;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
