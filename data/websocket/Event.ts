@@ -1,3 +1,4 @@
+import { addFriend, receiveRequest, removedByFriend } from "../state/friendsSlice";
 import { MessageType, openedByFriend, receiveMessage } from "../state/messagesSlice";
 import { store } from "../state/store";
 
@@ -32,7 +33,18 @@ export const routeEvent = (event: Event) => {
       break;
     case "opened_message":
       console.log("recipient opened sent messages");
-      store.dispatch(openedByFriend(event.payload.recipient));
+      store.dispatch(openedByFriend(event.payload.eventSender));
+      break;
+    case "new_request":
+      console.log("received new request");
+      store.dispatch(receiveRequest(event.payload.eventSender));
+      break;
+    case "add_friend":
+      console.log("friend request accepted");
+      store.dispatch(addFriend(event.payload.eventSender));
+      break;
+    case "removed_friend":
+      store.dispatch(removedByFriend(event.payload.eventSender));
       break;
     default: 
       alert("unsupported message type");

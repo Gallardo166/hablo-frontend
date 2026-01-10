@@ -67,8 +67,8 @@ export const sendMessage = createAsyncThunk("messages/sendMessage", async (data:
 
 export const openMessage = createAsyncThunk("messages/openMessage", async (data: {conn: WebSocket, username: string, friendname: string}) => {
   const payload = {
-    recipient: data.username,
-    sender: data.friendname,
+    eventSender: data.username,
+    eventRecipient: data.friendname,
   }
   const event: Event = { type: "open_message", payload };
   data.conn.send(JSON.stringify(event));

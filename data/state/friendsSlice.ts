@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
+import { Event } from "../websocket/Event";
 import { RootState } from "./store";
 
 export type FriendsState = {
@@ -35,7 +36,14 @@ export const fetchFriends = createAsyncThunk("friends/fetchFriends", async () =>
   return content.friends.friends;
 });
 
-export const sendRequest = createAsyncThunk("friends/sendRequest", async (recipient: string) => {
+export const sendRequest = createAsyncThunk("friends/sendRequest", async (data: {conn: WebSocket, username: string, recipient: string}) => {
+  const payload = {
+    eventSender: data.username,
+    eventRecipient: data.recipient,
+  }
+  const event: Event = { type: "send_request", payload };
+  data.conn.send(JSON.stringify(event));
+
   const token = await SecureStore.getItemAsync("token");
   const response = await fetch("http://localhost:8080/v1/friends", {
     "method": "POST",
@@ -44,15 +52,22 @@ export const sendRequest = createAsyncThunk("friends/sendRequest", async (recipi
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`
     },
-    "body": JSON.stringify({ recipient })
+    "body": JSON.stringify({ recipient: data.recipient })
   });
   await response.json();
-  return recipient;
+  return data.recipient;
 });
 
-export const acceptRequest = createAsyncThunk("friends/acceptRequest", async (sender: string) => {
+export const acceptRequest = createAsyncThunk("friends/acceptRequest", async (data: {conn: WebSocket, username: string, sender: string}) => {
+  const payload = {
+    eventSender: data.username,
+    eventRecipient: data.sender,
+  }
+  const event: Event = { type: "accept_request", payload };
+  data.conn.send(JSON.stringify(event));
+
   const token = await SecureStore.getItemAsync("token");
-  const response = await fetch("http://localhost:8080/v1/friends/" + sender, {
+  const response = await fetch("http://localhost:8080/v1/friends/" + data.sender, {
     "method": "PUT",
     "headers": {
       "Accept": "application/json",
@@ -61,12 +76,20 @@ export const acceptRequest = createAsyncThunk("friends/acceptRequest", async (se
     },
   });
   await response.json();
-  return sender;
+  return data.sender;
 });
 
-export const removeFriend = createAsyncThunk("friends/removeFriend", async (username: string) => {
+export const removeFriend = createAsyncThunk("friends/removeFriend", async (data: {conn: WebSocket, username: string, friendname: string}) => {
+  console.log("removing friend");
+  const payload = {
+    eventSender: data.username,
+    eventRecipient: data.friendname,
+  }
+  const event: Event = { type: "remove_friend", payload };
+  data.conn.send(JSON.stringify(event));
+
   const token = await SecureStore.getItemAsync("token");
-  const response = await fetch("http://localhost:8080/v1/friends/" + username, {
+  const response = await fetch("http://localhost:8080/v1/friends/" + data.friendname, {
     "method": "DELETE",
     "headers": {
       "Accept": "application/json",
@@ -75,13 +98,31 @@ export const removeFriend = createAsyncThunk("friends/removeFriend", async (user
     },
   });
   await response.json();
-  return username;
-})
+  return data.friendname;
+});
 
 export const friendsSlice = createSlice({
   name: 'friends',
   initialState,
   reducers: {
+    receiveRequest: (state, action: PayloadAction<string>) => {
+      const friend = state.friends.find(friend => friend.username === action.payload);
+      if (friend) {
+        friend.status = "received request";
+      }
+    },
+    addFriend: (state, action: PayloadAction<string>) => {
+      const friend = state.friends.find(friend => friend.username === action.payload);
+      if (friend) {
+        friend.status = "friend";
+      }
+    },
+    removedByFriend: (state, action: PayloadAction<string>) => {
+      const friend = state.friends.find(friend => friend.username === action.payload);
+      if (friend) {
+        friend.status = "none";
+      }
+    },
     resetFriends: (state) => {
       state.status = "idle";
       state.friends = [];
@@ -141,6 +182,6 @@ export const selectNoStatus = createSelector(
 );
 export const selectFriendsStatus = (state: RootState) => state.friends.status;
 
-export const { resetFriends } = friendsSlice.actions;
+export const { receiveRequest, addFriend, removedByFriend, resetFriends } = friendsSlice.actions;
 
 export default friendsSlice.reducer;
