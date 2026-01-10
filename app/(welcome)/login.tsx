@@ -1,7 +1,11 @@
-import { useUserContext } from '@/components/welcome/sign-up/UserContext';
+import { useSessionContext } from '@/components/context/SessionContext';
+import { fetchMessages } from '@/data/state/messagesSlice';
+import { AppDispatch } from '@/data/state/store';
+import { createConnection } from '@/data/websocket/Event';
 import * as SecureStore from 'expo-secure-store';
 import React, { useState } from 'react';
 import { Button, GestureResponderEvent, Text, TextInput, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 type LoginErrorsType = {
   username: string; // cannot be empty, at most 100 chars long
@@ -13,7 +17,8 @@ const LoginScreen = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<LoginErrorsType>({username: "", password: "", general: ""});
-  const { setUser } = useUserContext();
+  const { setUser, setConn } = useSessionContext();
+  const dispatch = useDispatch<AppDispatch>();
 
   function handleUsernameChangeText(text: string) {
     setUsername(text);
@@ -50,12 +55,12 @@ const LoginScreen = () => {
       })
     });
     const content = await response.json();
-    console.log(content);
     if (!content.error) {
       await SecureStore.deleteItemAsync("token");
       await SecureStore.setItemAsync("token", content.tokenData.token);
-      console.log(content.user);
       setUser(content.user);
+      setConn(createConnection(content.otp, content.user.username));
+      dispatch(fetchMessages());
     } else if (content.error === "the requested resource could not be found" ||
                content.error === "invalid authentication credentials") {
       setErrors(errors => ({...errors, general: "Incorrect username or password."}));
@@ -69,7 +74,11 @@ const LoginScreen = () => {
       <TextInput placeholder="Password" defaultValue={password} onChangeText={handlePasswordChangeText} />
       {errors.password ? <Text>{errors.password}</Text> : null}
       {errors.general ? <Text>{errors.general}</Text> : null}
-      <Button title="Log in" onPress={handleSubmit} />
+      <Button
+        disabled={Object.values(errors).some(error => !!error) || !username || !password}
+        title="Log in"
+        onPress={handleSubmit}
+      />
     </View>
   )
 }

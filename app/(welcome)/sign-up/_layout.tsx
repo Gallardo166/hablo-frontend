@@ -1,5 +1,5 @@
-import { SignUpContext } from '@/components/welcome/sign-up/SignUpContext'
-import { useUserContext } from '@/components/welcome/sign-up/UserContext'
+import { useSessionContext } from '@/components/context/SessionContext'
+import { SignUpContext } from '@/components/context/SignUpContext'
 import { Link, Slot } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
@@ -14,7 +14,7 @@ const SignUpLayout = () => {
   const [targetLang, setTargetLang] = useState<string>("");
   const [languages, setLanguages] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
-  const { setUser } = useUserContext();
+  const { setUser } = useSessionContext();
   
   const getLanguages = async () => {
     const response = await fetch("http://localhost:8080/v1/languages");

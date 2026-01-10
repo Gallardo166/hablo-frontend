@@ -1,15 +1,33 @@
-import { useUserContext } from '@/components/welcome/sign-up/UserContext';
+import { selectFriend } from '@/data/state/friendsSlice';
+import { router } from 'expo-router';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useSelector } from 'react-redux';
 
-const SignUp = () => {
-  const { user } = useUserContext();
+const Chats = () => {
+  const friends = useSelector(selectFriend);
 
   return (
     <View>
-      <Text>You&apos;re in, {user?.username}!</Text>
+      {friends
+        ? friends.filter(friend => friend.status === "friend").map(friend => (
+            <View key={friend.username}>
+              <TouchableOpacity
+                onPress={() =>
+                  router.navigate({
+                    pathname: "/chatroom",
+                    params: { friendname: friend.username }
+                  }
+                )}
+              >
+                <Text>{friend.username}</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        : null}
     </View>
+
   )
 }
 
-export default SignUp
+export default Chats

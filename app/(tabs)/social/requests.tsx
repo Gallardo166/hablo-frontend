@@ -1,32 +1,34 @@
-import { useSocialContext } from '@/components/welcome/sign-up/SocialContext';
+import { acceptRequest, removeFriend, selectReceivedRequest, selectSentRequest } from '@/data/state/friendsSlice';
+import { AppDispatch } from '@/data/state/store';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Requests = () => {
-  const { friends, handleRemove, handleAcceptRequest } = useSocialContext();
+  const dispatch = useDispatch<AppDispatch>();
+  const sentRequestList = useSelector(selectSentRequest);
+  const receivedRequestList = useSelector(selectReceivedRequest);
 
   return (
     <View>
       <Text>Pending approval</Text>
-      {friends
-        ? friends.filter(friend => friend.status === "received request")
-                 .map(friend => (
-                    <View key={friend.username}>
-                      <Text>{friend.username}</Text>
-                      <Button title="Decline" onPress={() => handleRemove(friend.username)} />
-                      <Button title="Confirm" onPress={() => handleAcceptRequest(friend.username)} />
-                    </View>
-                 ))
+      {receivedRequestList
+        ? receivedRequestList.map(friend => (
+            <View key={friend.username}>
+              <Text>{friend.username}</Text>
+              <Button title="Decline" onPress={() => dispatch(removeFriend(friend.username))} />
+              <Button title="Confirm" onPress={() => dispatch(acceptRequest(friend.username))} />
+            </View>
+          ))
         : null}
       <Text>Sent requests</Text>
-      {friends
-        ? friends.filter(friend => friend.status === "sent request")
-                 .map(friend => (
-                    <View key={friend.username}>
-                      <Text>{friend.username}</Text>
-                      <Button title="Cancel" onPress={() => handleRemove(friend.username)} />
-                    </View>
-                 ))
+      {sentRequestList
+        ? sentRequestList.map(friend => (
+            <View key={friend.username}>
+              <Text>{friend.username}</Text>
+              <Button title="Cancel" onPress={() => dispatch(removeFriend(friend.username))} />
+            </View>
+          ))
         : null}
     </View>
   )

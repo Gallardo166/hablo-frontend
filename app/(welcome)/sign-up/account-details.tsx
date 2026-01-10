@@ -1,4 +1,4 @@
-import { useSignUpContext } from '@/components/welcome/sign-up/SignUpContext';
+import { useSignUpContext } from '@/components/context/SignUpContext';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';

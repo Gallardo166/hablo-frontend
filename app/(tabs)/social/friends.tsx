@@ -1,17 +1,20 @@
-import { useSocialContext } from '@/components/welcome/sign-up/SocialContext';
+import { removeFriend, selectFriend } from '@/data/state/friendsSlice';
+import { AppDispatch } from '@/data/state/store';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Friends = () => {
-  const { friends, handleRemove } = useSocialContext();
+  const dispatch = useDispatch<AppDispatch>();
+  const friends = useSelector(selectFriend);
 
   return (
     <View>
       {friends
-        ? friends.filter(friend => friend.status === "friend").map(friend => (
+        ? friends.map(friend => (
             <View key={friend.username}>
               <Text>{friend.username}</Text>
-              <Button title="Remove" onPress={() => handleRemove(friend.username)} />
+              <Button title="Remove" onPress={() => dispatch(removeFriend(friend.username))} />
             </View>
         ))
         : null}

@@ -1,12 +1,16 @@
-import { useUserContext } from '@/components/welcome/sign-up/UserContext';
+import { useSessionContext } from '@/components/context/SessionContext';
+import { resetFriends } from '@/data/state/friendsSlice';
+import { AppDispatch } from '@/data/state/store';
 import * as SecureStore from 'expo-secure-store';
 import React, { useState } from 'react';
 import { Button, Modal, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import "../globals.css";
 
 const Profile = () => {
   const [ modalVisible, setModalVisible ] = useState<boolean>(false);
-  const { setUser } = useUserContext();
+  const { conn, setUser, setConn } = useSessionContext();
+  const dispatch = useDispatch<AppDispatch>();
 
   async function handleLogout() {
     const token = await SecureStore.getItemAsync("token");
@@ -21,7 +25,11 @@ const Profile = () => {
     const content = await response.json();
     console.log(content);
     if (!content.error) {
+      await SecureStore.deleteItemAsync("token");
       setUser(null);
+      conn?.close();
+      setConn(null);
+      dispatch(resetFriends());
     }
   }
 
