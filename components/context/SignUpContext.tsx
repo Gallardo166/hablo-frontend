@@ -17,6 +17,7 @@ export type SignUpContextType = {
   languages: string[];
   handleSubmit: (e: GestureResponderEvent) => Promise<void>;
   error: string;
+  loading: boolean;
 }
 
 export const SignUpContext = createContext<SignUpContextType | undefined>(undefined);

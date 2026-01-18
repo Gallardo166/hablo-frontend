@@ -3,7 +3,7 @@ import React from 'react';
 
 const WelcomeLayout = () => {
   return (
-    <Stack>
+    <Stack screenOptions={{headerShown: false}}>
       <Stack.Screen name="sign-up" />
       <Stack.Screen name="login" />
     </Stack>

@@ -4,7 +4,7 @@
     "slug": "hablo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/splash-icon-light.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "hablo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -54,16 +54,20 @@
       [
         "expo-build-properties",
         {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          },
           "ios": {
-            "useFrameworks": "static",
-            "podfileProperties": {
-              "use_modular_headers!": true
-            },
-            "buildReactNativeFromSource": true
+            "deploymentTarget": "15.1",
+            "newArchEnabled": true,
+            "ccacheEnabled": true
           }
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
