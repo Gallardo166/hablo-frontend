@@ -2,6 +2,7 @@ import { createAsyncThunk, createSelector, createSlice, PayloadAction } from "@r
 import * as SecureStore from "expo-secure-store";
 import { Event } from "../websocket/Event";
 import { RootState } from "./store";
+import { selectAllMessages } from "./messagesSlice";
 
 export type FriendsState = {
   friends: FriendType[];
@@ -165,8 +166,18 @@ export const friendsSlice = createSlice({
 export const selectAllFriends = (state: RootState) => state.friends.friends;
 
 export const selectFriend = createSelector(
-  [selectAllFriends],
-  (friends) => friends.filter(friend => friend.status === "friend")
+  [selectAllFriends, selectAllMessages],
+  (friends, messages) => 
+    friends.filter(friend => friend.status === "friend")
+           .map(friend => ({
+                  username: friend.username,
+                  mostRecentMessage: messages.filter(message => message.friendname === friend.username)
+                                            .sort((m1, m2) => m1.time > m2.time ? -1 : 1)[0],
+                  unopenedCount: messages.filter(message => message.friendname === friend.username
+                                                            && message.role === "recipient"
+                                                            && !message.opened)
+                                          .length
+                }))
 );
 export const selectSentRequest = createSelector(
   [selectAllFriends],

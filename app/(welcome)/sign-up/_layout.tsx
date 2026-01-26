@@ -1,10 +1,14 @@
 import { useSessionContext } from '@/components/context/SessionContext'
 import { SignUpContext } from '@/components/context/SignUpContext'
 import { PrimaryText, StyledLink, StyledView } from '@/components/Styled'
+import { fetchFriends } from '@/data/state/friendsSlice'
+import { AppDispatch } from '@/data/state/store'
+import { createConnection } from '@/data/websocket/Event'
 import { Slot } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
 import { GestureResponderEvent, View } from 'react-native'
+import { useDispatch } from 'react-redux'
 
 const SignUpLayout = () => {
   const [username, setUsername] = useState<string>("");
@@ -16,7 +20,9 @@ const SignUpLayout = () => {
   const [languages, setLanguages] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { setUser } = useSessionContext();
+  const { setUser, setConn } = useSessionContext();
+  const dispatch = useDispatch<AppDispatch>();
+
   
   const getLanguages = async () => {
     const response = await fetch("http://localhost:8080/v1/languages");
@@ -48,15 +54,18 @@ const SignUpLayout = () => {
       await SecureStore.deleteItemAsync("token");
       await SecureStore.setItemAsync("token", content.tokenData.token);
       setUser(content.user);
+      setConn(createConnection(content.otp, content.user.username));
+      dispatch(fetchFriends());
+      setLoading(false);
     } else if (content.error === "Duplicate value") {
       setError("This username is taken!")
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
     <SignUpContext value={{username, password, confirmPassword, imageUrl, sourceLang, targetLang,
-      setUsername, setPassword, setConfirmPassword, setImageUrl, setSourceLang, setTargetLang, languages, handleSubmit, error, loading
+      setUsername, setPassword, setConfirmPassword, setImageUrl, setSourceLang, setTargetLang, languages, handleSubmit, error, setError, loading
     }}>
       <StyledView className="flex gap-12">
         <PrimaryText className="mt-4 text-2xl">Let&apos;s get to know you!</PrimaryText>

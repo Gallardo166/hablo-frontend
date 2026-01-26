@@ -127,14 +127,37 @@ export const messagesSlice = createSlice({
 });
 
 export const selectAllMessages = (state: RootState) => state.messages.messages;
+
 export const selectMessagesWithFriend = createSelector(
   [
     selectAllMessages,
     (state: RootState, friendname: string) => friendname
   ],
   (messages, friendname) => messages.filter(message => message.friendname === friendname)
-                                    .sort((m1, m2) => m1.time < m2.time ? -1 : 1)
+                                    .sort((m1, m2) => m1.time > m2.time ? -1 : 1)
 );
+
+export const selectMessagesPartitionedByDate = createSelector(
+  [selectMessagesWithFriend],
+  messages => {
+    const partitionedByDate: MessageType[][] = [[]];
+    const lastMsgPointer = [0, 0];
+    for (let i = 0, msg; msg = messages[i]; i++) {
+      if (partitionedByDate[0].length === 0) {
+        partitionedByDate[0].push(msg);
+      } else if (new Date(msg.time).getDate() === new Date(partitionedByDate[lastMsgPointer[0]][lastMsgPointer[1]].time).getDate()) {
+        partitionedByDate[lastMsgPointer[0]].unshift(msg);
+        lastMsgPointer[1] += 1;
+      } else {
+        partitionedByDate.push([msg]);
+        lastMsgPointer[0] += 1;
+        lastMsgPointer[1] = 0;
+      }
+    }
+
+    return partitionedByDate;
+  }
+)
 export const selectHasUnopenedMessages = createSelector(
   [selectMessagesWithFriend],
   messages => messages.filter(message => message.role === "recipient")

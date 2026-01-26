@@ -12,7 +12,7 @@ type AccountDetailErrorsType = {
 
 const AccountDetails = () => {
   const { username, password, confirmPassword, setUsername,
-          setPassword, setConfirmPassword, handleSubmit, error, loading } = useSignUpContext();
+          setPassword, setConfirmPassword, handleSubmit, error, setError, loading } = useSignUpContext();
   const [errors, setErrors] = useState<AccountDetailErrorsType>({username: "", password: "", confirmPassword: ""});
   const { colorScheme } = useAppContext();
 
@@ -20,10 +20,13 @@ const AccountDetails = () => {
     setUsername(text);
     if (!text) {
       setErrors(errors => ({...errors, username: "Username must not be empty."}));
+      setError("");
     } else if (text.length > 100) {
-      setErrors(errors => ({...errors, username: "Username must be at most 100 characters."}))
+      setErrors(errors => ({...errors, username: "Username must be at most 100 characters."}));
+      setError("");
     } else {
       setErrors(errors => ({...errors, username: ""}));
+      setError("");
     }
   }
 

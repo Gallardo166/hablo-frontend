@@ -9,6 +9,8 @@ import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 
 SplashScreen.preventAutoHideAsync();
@@ -57,16 +59,20 @@ const RootLayout = () => {
   return (
       <Provider store={store}>
         <AppContext value={ {colorScheme } }>
-          <SessionContext value={ { user, conn, setUser, setConn } }>
-            <Stack screenOptions={{headerShown: false}}>
-              <Stack.Protected guard={!user}>
-                <Stack.Screen name="(welcome)" />
-              </Stack.Protected>
-              <Stack.Protected guard={!!user}>
-                <Stack.Screen name="(tabs)" options={{ title: "Chats" }} />
-              </Stack.Protected>
-            </Stack>
-          </SessionContext>
+          <SafeAreaProvider>
+            <KeyboardProvider>
+              <SessionContext value={ { user, conn, setUser, setConn } }>
+                <Stack screenOptions={{headerShown: false}}>
+                  <Stack.Protected guard={!user}>
+                    <Stack.Screen name="(welcome)" />
+                  </Stack.Protected>
+                  <Stack.Protected guard={!!user}>
+                    <Stack.Screen name="(tabs)" options={{ title: "Chats" }} />
+                  </Stack.Protected>
+                </Stack>
+              </SessionContext>
+            </KeyboardProvider>
+          </SafeAreaProvider>
         </AppContext>
       </Provider>
   )

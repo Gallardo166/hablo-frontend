@@ -15,17 +15,18 @@ const TabsLayout = () => {
   }, [friendsStatus, dispatch]);
 
   return (
-    <Tabs initialRouteName="index">
+    <Tabs initialRouteName="index" screenOptions={{headerShown: false}}>
       <Tabs.Screen
         name="social"
         options={{
           title: "Social"
         }}
+        
       />
       <Tabs.Screen
         name="index"
         options={{
-          title: "Chats"
+          title: "Chats",
         }}
       />
       <Tabs.Screen

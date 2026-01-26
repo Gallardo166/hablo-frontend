@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { Button, Modal, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import "../globals.css";
+import { StyledView } from '@/components/Styled';
 
 const Profile = () => {
   const [ modalVisible, setModalVisible ] = useState<boolean>(false);
@@ -34,7 +35,7 @@ const Profile = () => {
   }
 
   return (
-    <View>
+    <StyledView>
       <Modal visible={modalVisible} className="bg-black">
         <View className="flex-1 items-center justify-center">
           <Text className="font-bold">Are you sure you want to log out?</Text>
@@ -43,7 +44,7 @@ const Profile = () => {
         </View>
       </Modal>
       <Button title="Log out" onPress={() => setModalVisible(true)} />
-    </View>
+    </StyledView>
   )
 }
 

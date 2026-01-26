@@ -8,6 +8,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        "zinc-350": "#b6b6ba",
         primary: {
           200: "#763091",
           100: "#8A60C5",

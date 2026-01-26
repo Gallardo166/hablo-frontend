@@ -1,8 +1,8 @@
-import { Href, useRouter } from "expo-router"
-import React from "react"
-import { ActivityIndicator, GestureResponderEvent, Text, TextInput, TouchableOpacity } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { useAppContext } from "./context/AppContext"
+import { Href, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, GestureResponderEvent, Keyboard, Text, TextInput, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useAppContext } from "./context/AppContext";
 
 export const PrimaryText = ({children, className}: {children: React.ReactNode, className?: string}) => {
   const { colorScheme } = useAppContext();
@@ -18,7 +18,7 @@ export const SecondaryText = ({children, className}: {children: React.ReactNode,
   const { colorScheme } = useAppContext();
 
   return (
-    <Text className={"font-itim " + (colorScheme === "light" ? "text-zinc-600" : "text-zinc-400") + (className ? " " + className : "") }>
+    <Text className={"font-itim " + (colorScheme === "light" ? "text-zinc-500" : "text-zinc-400") + (className ? " " + className : "") }>
       {children}
     </Text>
   )
@@ -47,16 +47,30 @@ export const StyledLink = ({text, className, href, disabled}: {text: string, cla
 }
 
 export const StyledView = ({children, className}: {children: React.ReactNode, className? : string}) => {
+  const [ safeBottom, setSafeBottom ] = useState<boolean>(true);
   const { colorScheme } = useAppContext();
 
+  useEffect(() => {
+    const keyboardOpenEvent = Keyboard.addListener("keyboardWillShow", () => setSafeBottom(false));
+    const keyboardCloseEvent = Keyboard.addListener("keyboardWillHide", () => setSafeBottom(true));
+
+    return () => {
+      keyboardOpenEvent.remove();
+      keyboardCloseEvent.remove();
+    }
+  }, []);
+
   return (
-    <SafeAreaView className={"h-screen pl-12 pr-12 pb-8 " + (colorScheme === "light" ? "bg-zinc-200" : "bg-zinc-900") + (className ? " " + className : "")}>
+    <SafeAreaView
+      edges={safeBottom ? ["right", "top", "left", "bottom"] : ["right", "top", "left"]}
+      className={"h-screen pl-12 pr-12 " + (colorScheme === "light" ? "bg-zinc-200" : "bg-zinc-900") + (className ? " " + className : "")}
+    >
       {children}
     </SafeAreaView>
   )
 }
 
-export const StyledInput = ({placeholder, value, onChangeText}: {placeholder: string, value: string, onChangeText: (text: string) => void} ) => {
+export const StyledInput = ({placeholder, value, onChangeText, className, multiline}: {placeholder: string, value: string, onChangeText: (text: string) => void, className?: string, multiline?: boolean} ) => {
   const { colorScheme } = useAppContext();
 
   const scheme = colorScheme === "light"
@@ -65,7 +79,8 @@ export const StyledInput = ({placeholder, value, onChangeText}: {placeholder: st
 
   return (
     <TextInput
-      className={"border rounded-lg font-itim p-2 " + scheme}
+      multiline={!!multiline}
+      className={"border rounded-lg font-itim p-2 " + scheme + " " + className}
       placeholderTextColor="#71717b"
       placeholder={placeholder} value={value} onChangeText={onChangeText} />
   )

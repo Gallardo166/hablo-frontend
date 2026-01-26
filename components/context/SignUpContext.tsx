@@ -17,6 +17,7 @@ export type SignUpContextType = {
   languages: string[];
   handleSubmit: (e: GestureResponderEvent) => Promise<void>;
   error: string;
+  setError: React.Dispatch<React.SetStateAction<string>>;
   loading: boolean;
 }
 
