@@ -1,50 +1,12 @@
-# Welcome to your Expo app 👋
+# Hablo Messaging App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Live messaging
 
-## Get started
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2026-02-02 at 01 50 31" src="https://github.com/user-attachments/assets/c3099d0b-6c34-4ead-a1c6-e4c798e221c4" />
 
-1. Install dependencies
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 16 Pro - 2026-02-02 at 01 52 15" src="https://github.com/user-attachments/assets/63ebefdd-3dfc-4f23-948e-b57bc12cee8a" />
 
-   ```bash
-   npm install
-   ```
+## Upcoming Features
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Cross-language messaging
+- Language flashcard practice
